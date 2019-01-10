@@ -1,7 +1,7 @@
 `funC library` 
 ===
 
-Build with emacs <img src="https://shop.fsf.org/sites/default/files/styles/product_zoom/public/Emacs-icon.sh_.png" width="100" height="100" />
+Build with emacs <img src="https://shop.fsf.org/sites/default/files/styles/product_zoom/public/Emacs-icon.sh_.png" width="40" height="40" />
 
 This library attempts to make programming in a functional style
 simpler in C. In other words it tries to make programming
@@ -44,7 +44,7 @@ working with associated types
   Is based on `void *` pointers and `memcpy`
 * Implements `map, fold, show` in every container module
 
-<img src="https://cdn.shopify.com/s/files/1/0402/9449/products/torvalds.png?v=1406355999" width="200" height="200" />
+<img align="center" src="https://cdn.shopify.com/s/files/1/0402/9449/products/torvalds.png?v=1406355999" width="200" height="200" />
 
 Examples
 ---
