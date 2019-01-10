@@ -58,6 +58,22 @@ int intMatch3(int selector
   }
 }
 
+void* voidPointerMatch3(int selector
+			, int caseA, void* a
+			, int caseB, void* b
+			, int caseC, void* c) {
+  if (selector == caseA) {
+    return a;
+  } else if (selector == caseB) {
+    return b;
+  } else if (selector == caseC) {
+    return c;
+  } else {
+    printf("The only thing you should pass to this function is an instance of Enum3\n");
+    exit(1);
+  }
+}
+
 // also VoidPointer version would be useful
 // example: dispatch the top level function to one of the simpler functions
 // that return a pointer to a struct/c array
@@ -72,6 +88,18 @@ int intMatchEnum3(int selector // enum instance (with default 0,1,2 assignments)
       , 2, c);
 }
 
+void* voidPointerMatchEnum3(int selector // enum instance (with default 0,1,2 assignments)
+			    , void* a
+			    , void* b
+			    , void* c) {
+  return voidPointerMatch3
+    ( selector
+      , 0, a
+      , 1, b
+      , 2, c);
+}
+
+
 typedef enum { Less, Equal, Greater } Order;
 Order intCompare(int a, int b) {
   return intWhen2
@@ -80,8 +108,18 @@ Order intCompare(int a, int b) {
       , Greater);
 }
 
-/* typedef int (*IntToInt)(int); */
-/* void* intControlFor(int control, IntToInt  */
+typedef int (*IntToInt)(int);
+typedef bool (*IntToBool)(int);
+
+//      list*                                   (int, list*)
+typedef void* (*IntAndVoidPointerToVoidPointer)(int, void*);
+void* intControlFor(int control, IntToInt updateControl, IntToBool controlPredicate
+		    , void* state, IntAndVoidPointerToVoidPointer mapState) {
+  while((*controlPredicate)(control)) {
+    state = (*mapState)(control, state);
+  }
+  return state;
+}
 
 //
 
@@ -89,15 +127,40 @@ list* listEmpty() {
   return NULL;
 }
 
-list* listIntegerRange(int first, int last) {
-  return listEmpty();
-  /* return (list*) */
-  /*   voidPointerMatchEnum3 */
-  /*   ( intCompare(first, last) */
+list* listIntegerRangeAscending(int first, int last) {
+  /* intControlFor */
+  /*   ( first */
   /*     , increment */
-  /*     , listEmpty() */
-  /*     , decrement) */
+  /*     , lessThan */
 }
+
+/* list* listIntegerRange(int first, int last) { */
+/*   return (list*) */
+/*     voidPointerMatchEnum3 */
+/*     ( intCompare (first, last) */
+/*       , listIntegerRangeAscending (first, last) */
+/*       , listEmpty() */
+/*       , listIntegerRangeDescending (first, last)) */
+/* } */
+
+// need closures for this
+// actually for the less nice implementation we also need a closure for the same reason
+/* list* listIntegerRange(int first, int last) { */
+/*   return (list*) */
+/*     intControlFor */
+/*     ( first */
+/*       , (IntToInt) voidPointerMatchEnum3 */
+/*       ( intCompare (first, last) */
+/* 	, (void*) increment */
+/* 	, NULL */
+/* 	, (void*) decrement) */
+/*       , (IntToBool) voidPointerMatchEnum3 */
+/*       ( intCompare (first, last) */
+/* 	, (void*) // need closure for this, othwerwise how do I inject */
+/* 	// last dependency into the function? */
+/* 	// similar issues with othwer two cases */
+/* 	)) */
+/* } */
 
 bool listIsEmpty(const list* xs) {
   return xs == NULL;
@@ -144,7 +207,7 @@ void listFree(list* xs) {
 
 const struct listModule List =
   { .empty = listEmpty,
-    .integerRange = listIntegerRange,
+    .integerRange = listIntegerRangeAscending,
     .isEmpty = listIsEmpty,
     .consBox = listConsBox,
     .cons = listCons,
