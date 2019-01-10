@@ -5,6 +5,18 @@
 int increment(int x) { return x + 1; }
 int decrement(int x) { return x - 1; }
 
+bool intLessOrEqualThan(int a, int b) {
+  return a <= b;
+}
+
+bool intGreaterOrEqualThan(int a, int b) {
+  return a <= b;
+}
+
+bool intConstFalse(int a, int b) {
+  return false;
+}
+
 // take this into Function module
 typedef void (*VoidInVoid)(void);
 
@@ -110,13 +122,16 @@ Order intCompare(int a, int b) {
 
 typedef int (*IntToInt)(int);
 typedef bool (*IntToBool)(int);
+typedef bool (*IntAndIntToBool)(int, int);
 
 //      list*                                   (int, list*)
 typedef void* (*IntAndVoidPointerToVoidPointer)(int, void*);
-void* intControlFor(int control, IntToInt updateControl, IntToBool controlPredicate
+void* intControlFor(int partialControlPredicate
+		    , int control, IntAndIntToBool controlPredicate, IntToInt updateControl
 		    , void* state, IntAndVoidPointerToVoidPointer mapState) {
-  while((*controlPredicate)(control)) {
+  while((*controlPredicate)(control, partialControlPredicate)) {
     state = (*mapState)(control, state);
+    control = (*updateControl)(control);
   }
   return state;
 }
@@ -126,41 +141,6 @@ void* intControlFor(int control, IntToInt updateControl, IntToBool controlPredic
 list* listEmpty() {
   return NULL;
 }
-
-list* listIntegerRangeAscending(int first, int last) {
-  /* intControlFor */
-  /*   ( first */
-  /*     , increment */
-  /*     , lessThan */
-}
-
-/* list* listIntegerRange(int first, int last) { */
-/*   return (list*) */
-/*     voidPointerMatchEnum3 */
-/*     ( intCompare (first, last) */
-/*       , listIntegerRangeAscending (first, last) */
-/*       , listEmpty() */
-/*       , listIntegerRangeDescending (first, last)) */
-/* } */
-
-// need closures for this
-// actually for the less nice implementation we also need a closure for the same reason
-/* list* listIntegerRange(int first, int last) { */
-/*   return (list*) */
-/*     intControlFor */
-/*     ( first */
-/*       , (IntToInt) voidPointerMatchEnum3 */
-/*       ( intCompare (first, last) */
-/* 	, (void*) increment */
-/* 	, NULL */
-/* 	, (void*) decrement) */
-/*       , (IntToBool) voidPointerMatchEnum3 */
-/*       ( intCompare (first, last) */
-/* 	, (void*) // need closure for this, othwerwise how do I inject */
-/* 	// last dependency into the function? */
-/* 	// similar issues with othwer two cases */
-/* 	)) */
-/* } */
 
 bool listIsEmpty(const list* xs) {
   return xs == NULL;
@@ -178,6 +158,54 @@ list* listCons(size_t size, void* unmanagedPointer, list* xs) {
   return listConsBox
     ( Box.box(size, unmanagedPointer)
      , xs);
+}
+
+/* list* listIntegerRangeAscending(int first, int last) { */
+/*   intControlFor */
+/*     ( first */
+/*       , lessThan */
+/*       , increment */
+      
+
+/* } */
+
+/* list* listIntegerRange(int first, int last) { */
+/*   return (list*) */
+/*     voidPointerMatchEnum3 */
+/*     ( intCompare (first, last) */
+/*       , listIntegerRangeAscending (first, last) */
+/*       , listEmpty() */
+/*       , listIntegerRangeDescending (first, last)) */
+/* } */
+
+// need closures for this
+// actually for the less nice implementation we also need a closure for the same reason
+	// need closure for this, othwerwise how do I inject (in predicate)
+	// `last` dependency into the function?
+	// similar issues with othwer two cases
+
+void* listConsInt(int x, void* xs) {
+  return (void*) listCons(sizeof(int), (void*) &x, (list*) xs);
+}
+
+list* listIntegerRange(int first, int last) {
+  return (list*)
+    intControlFor
+    ( last
+      , first
+      , (IntAndIntToBool) voidPointerMatchEnum3
+      ( intCompare (first, last)
+	, (void*) intLessOrEqualThan
+	, (void*) intConstFalse
+	, (void*) intGreaterOrEqualThan)
+      , (IntToInt) voidPointerMatchEnum3
+      ( intCompare (first, last)
+	, (void*) increment
+	, NULL
+	, (void*) decrement)
+      , (void*) listEmpty()
+      , listConsInt
+      );
 }
 
 void listMap_(VoidInVoidPointer f, const list* xs) {
@@ -207,7 +235,7 @@ void listFree(list* xs) {
 
 const struct listModule List =
   { .empty = listEmpty,
-    .integerRange = listIntegerRangeAscending,
+    .integerRange = listIntegerRange,
     .isEmpty = listIsEmpty,
     .consBox = listConsBox,
     .cons = listCons,

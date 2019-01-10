@@ -66,11 +66,19 @@ void testMapIntToTuplePrint() {
   
 }
 
+void testIntegerRange() {
+  List.map_
+    ( printInt
+      , List.integerRange(55, 60));
+}
+
 // test suite
 int main () {
   testEmptyConsMap_();
   testMap();
   testMapIntToTuplePrint();
+
+  testIntegerRange();
 
   return 0;
 }
