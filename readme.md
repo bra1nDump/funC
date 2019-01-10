@@ -1,5 +1,7 @@
-`funC library`
+`funC library` 
 ===
+
+Build with emacs <img src="https://shop.fsf.org/sites/default/files/styles/product_zoom/public/Emacs-icon.sh_.png" width="100" height="100" />
 
 This library attempts to make programming in a functional style
 simpler in C. In other words it tries to make programming
@@ -42,11 +44,37 @@ working with associated types
   Is based on `void *` pointers and `memcpy`
 * Implements `map, fold, show` in every container module
 
-![alt text](https://cdn.shopify.com/s/files/1/0402/9449/products/torvalds.png?v=1406355999 "meme")
-<img src="https://cdn.shopify.com/s/files/1/0402/9449/products/torvalds.png?v=1406355999" width="50" height="50" />
+<img src="https://cdn.shopify.com/s/files/1/0402/9449/products/torvalds.png?v=1406355999" width="200" height="200" />
 
 Examples
 ---
+
+```C
+box square(void* xVoidPointer) {
+	int xInt = *((int*) xVoidPointer);
+	int newContents = xInt * xInt;
+	return Box.box(sizeof(int), &newContents);
+}
+
+void printInt(void* xVoidPointer) {
+	printf("%d\n", *((int*) xVoidPointer));
+}
+
+int main() {
+	List.map_
+		( printInt
+		, List.map
+			( square
+			, List.integerRange(1, 10)));
+}
+
+```
+
+Did I just create an integer list from a range, mapped
+over it and printed it out all in one statement?
+
+Yes you did! We promissed you `fun`ctional C!
+
 
 What does the library not do?
 ---
