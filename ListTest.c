@@ -1,6 +1,27 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "Core.h"
 #include "List.h"
+
+// This will go to the Debug module
+#include <execinfo.h>
+#include <signal.h>
+#include <unistd.h>
+
+
+void handler(int sig) {
+  void *array[10];
+  size_t size;
+
+  // get void*'s for all entries on the stack
+  size = backtrace(array, 10);
+
+  // print out all the frames to stderr
+  fprintf(stderr, "Error: signal %d:\n", sig);
+  backtrace_symbols_fd(array, size, STDERR_FILENO);
+  exit(1);
+}
+// --
 
 // test
 void printInt(void* x) {
@@ -55,7 +76,7 @@ tuple initTuple(int first, int second) {
   x.second = second;
   return x;
 }
-  
+
 box toTuple(void* x) {
   int contents = *((int*) x);
   tuple newContents = initTuple(contents, contents + 1);
@@ -74,6 +95,8 @@ void testIntegerRange() {
 
 // test suite
 int main () {
+  signal(SIGSEGV, handler);
+  
   testEmptyConsMap_();
   testMap();
   testMapIntToTuplePrint();

@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "Core.h"
 #include "Box.h"
 
 struct list {
