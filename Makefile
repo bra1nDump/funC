@@ -7,6 +7,9 @@
 # $(var:.suffix=.newSuffix) - replace suffix
 # $(patsubst pattern,replacement,inText)
 
+# gcc options
+# -I<headers directory>
+# -L<shared libraries directory>
 
 # special variables
 SHELL = /bin/sh
@@ -39,34 +42,25 @@ copyHeaders:
 build: $(funCLib) copyHeaders
 
 #############################################################################################
-# tests
+# tests (this includes building the lab0 executable)
 testSrcDir = test
-testObjectDir = $(testSrcDir)/obj
+testExecutableDir = bin
 
 testSources = $(shell echo $(testSrcDir)/*.c)
-testObjects = $(patsubst $(testSrcDir)/%.c,$(testObjectDir)/%.o,$(testSources))
+testExecutables = $(patsubst $(testSrcDir)/%.c,$(testExecutableDir)/%,$(testSources))
 
-$(info -------------------------)
-$(info test sources and objects:)
-$(info $(testSources))
-$(info $(testObjects))
-$(info -------------------------)
+$(testExecutableDir)/%: $(testSrcDir)/%.c
+	$(CC) -I$(buildDir)/include -L$(buildDir) -lFunC $< -o $@
 
-$(testObjectDir)/%.o: $(testSrcDir)/%.c
-	$(CC) -c -I$(buildDir)/include $< -o $@
-
-testExecutable: $(testObjects)
-	$(CC) -I$(buildDir)/include -L./$(buildDir) -lFunC $(testObjects) -o testExecutable
-
-test: build testExecutable
+test: build $(testExecutables)
 	echo "testing started ..."
-	./testExecutable
-	echo "testing done!"
+	$(foreach testBinary,$(testExecutables),$(testBinary))
+	echo "testing completed :D"
 
 .PHONY: clean
 
 clean:
 	rm -f $(objectDir)/*
-	rm -f $(testObjectDir)/*
+	rm -f $(testExecutableDir)/*
 	rm -f $(buildDir)/*.so
 	rm -f $(buildDir)/include/*.h
