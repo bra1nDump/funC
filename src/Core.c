@@ -1,8 +1,42 @@
-#include <stdlib.h>
-#include <stdio.h>
-
 #include "Core.h"
 
+#include <stdio.h>
+#include <string.h>
+
+// -- Box --
+box boxBox(size_t size, void* managedPointer) {
+  box box;
+  if (size == 0 || managedPointer == NULL) {
+    box.managedPointer = NULL;
+    return box;
+  }
+  
+  box.managedPointer = malloc(size);
+  memcpy(box.managedPointer, managedPointer, size);
+
+  return box;
+}
+
+box boxBind(BoxInVoidPointer f, box b) {
+  return (*f)(b.managedPointer);
+}
+
+void boxBind_(VoidInVoidPointer f, box b) {
+  (*f)(b.managedPointer);
+}
+
+void boxFree(box x) {
+  free(x.managedPointer);
+}
+
+const BoxModule Box =
+  { .box = boxBox,
+    .bind = boxBind,
+    .bind_ = boxBind_,
+    .free = boxFree
+  };
+
+// -- Void --
 void voidGuard(bool predicate, VoidToVoid action) {
   if (predicate) {
     (*action)();
@@ -144,3 +178,8 @@ const VoidPointerModule VoidPointer =
   { .ifElse = voidPointerIfElse,
     .match3 = voidPointerMatch3 
   };
+
+// -- Regex
+/* list* regexMatch(cString pattern) { */
+  
+/* } */

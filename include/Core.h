@@ -1,7 +1,12 @@
-#include <stdbool.h>
-
 #ifndef CoreHeader
 #define CoreHeader
+
+#include <stdlib.h>
+#include <stdbool.h>
+
+// common data types
+typedef char* cString;
+typedef enum { Nothing, Just } maybe;
 
 // common function types
 typedef void (*VoidToVoid)(void);
@@ -61,5 +66,27 @@ typedef struct {
 extern const IntModule Int;
 extern const VoidModule Void;
 extern const VoidPointerModule VoidPointer;
+
+// -- Box --
+typedef struct box {
+  void* managedPointer;
+} box;
+
+typedef box (*BoxInVoidPointer)(void* boxContent);
+typedef void (*VoidInVoidPointer)(void* boxContent);
+
+typedef struct {
+  // constructors
+  box (*box)(size_t size, void* managedPointer);
+
+  // lifters
+  box (*bind)(BoxInVoidPointer f, box b);
+  void (*bind_)(VoidInVoidPointer f, box b);
+
+  // 
+  void (*free)(box b);
+} BoxModule;
+
+extern const BoxModule Box;
 
 #endif

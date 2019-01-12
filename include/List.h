@@ -1,10 +1,12 @@
+#ifndef ListHeader
+#define ListHeader
+
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 
 #include "Core.h"
-#include "Box.h"
 
 struct list {
   box data;
@@ -15,7 +17,7 @@ typedef struct list list;
 typedef void (*BoxAction)(void* boxContent);
 typedef box (*BoxTransformer)(void* boxContent);
 
-struct listModule {
+typedef struct {
   // constructors
   list* (*empty)(void);
   list* (*integerRange)(int first, int last);
@@ -40,7 +42,8 @@ struct listModule {
 
   // memory
   void (*free)(list* list);
-};
+} ListModule;
 
-extern const struct boxModule Box;
-extern const struct listModule List;
+extern const ListModule List;
+
+#endif

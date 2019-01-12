@@ -101,4 +101,17 @@ of cs 111 at UCLA winter 19 semester taught by proffessor Eggert.
 References
 ---
 
-https://lucabolognese.wordpress.com/2013/01/04/functional-programming-in-c/#discriminated-unions-in-c
+#### discussions 
+
+* [discriminated unions for functional programming](https://lucabolognese.wordpress.com/2013/01/04/functional-programming-in-c/#discriminated-unions-in-c)
+
+* [stackoverflow post tools for functional programming in C](https://stackoverflow.com/questions/216037/what-tools-are-there-for-functional-programming-in-c#_=_)
+
+#### alternatives
+
+* [Lightweight C library for functional programming](https://github.com/viktor-shepel/frunzik)
+
+
+#### or even better - write in a completely different language, but compile to C. Feels like not the most fair-game for the class lol
+
+* [compilers targeting C](https://github.com/dbohdan/compilers-targeting-c)

@@ -63,8 +63,17 @@ box toTuple(void* x) {
   return Box.box(sizeof(tuple), &newContents);
 }
 
+void tuplePrint(void* x) {
+  tuple* tuplePointer = (tuple*) x;
+  printf("%d %d\n", tuplePointer->first, tuplePointer->second);
+}
+
 void testMapIntToTuplePrint() {
-  
+  List.map_
+    ( tuplePrint
+      , List.map
+      ( toTuple
+	, List.integerRange(1, 10)));
 }
 
 void testIntegerRange() {
@@ -73,13 +82,16 @@ void testIntegerRange() {
       , List.integerRange(55, 60));
 }
 
+void testFromCArray() {
+  
+}
+
 // test suite
 int main () {
+  testIntegerRange();
   testEmptyConsMap_();
   testMap();
   testMapIntToTuplePrint();
-
-  testIntegerRange();
 
   return 0;
 }

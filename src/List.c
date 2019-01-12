@@ -32,7 +32,7 @@ list* listFromCArray(int count, size_t elementSize, void* array) {
   } else {
     return listCons
       ( elementSize, array
-	, listFromCArray(count - 1, elementSize, array + 1));
+	, listFromCArray(count - 1, elementSize, array + sizeof(void*)));
   }
 }
 
@@ -92,7 +92,7 @@ void listFree(list* xs) {
   }
 }
 
-const struct listModule List =
+const ListModule List =
   { .empty = listEmpty,
     .fromCArray = listFromCArray,
     .integerRange = listIntegerRange,
