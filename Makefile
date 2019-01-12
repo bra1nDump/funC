@@ -39,7 +39,7 @@ $(funCLib): $(objects)
 copyHeaders:
 	cp $(includeDir)/*.h $(buildDir)/include/
 
-build: $(funCLib) copyHeaders
+funC: $(funCLib) copyHeaders
 
 #############################################################################################
 # tests (this includes building the lab0 executable)
@@ -52,10 +52,21 @@ testExecutables = $(patsubst $(testSrcDir)/%.c,$(testExecutableDir)/%,$(testSour
 $(testExecutableDir)/%: $(testSrcDir)/%.c
 	$(CC) -I$(buildDir)/include -L$(buildDir) -lFunC $< -o $@
 
-test: build $(testExecutables)
-	echo "testing started ..."
+test: funC $(testExecutables)
+	$(info testing started ...)
 	$(foreach testBinary,$(testExecutables),$(testBinary))
-	echo "testing completed :D"
+	$(info testing completed :D)
+
+#############################################################################################
+# lab 0
+
+# dont forget to add -Wextra
+.DEFAULT_GOAL := lab
+
+lab0SrcDir = lab0
+
+lab: funC $(lab0SrcDir)/lab0.c
+	$(CC) -I$(buildDir)/include -L$(buildDir) -lFunC $(lab0SrcDir)/lab0.c -o $(lab0SrcDir)/lab0
 
 .PHONY: clean
 
@@ -64,3 +75,5 @@ clean:
 	rm -f $(testExecutableDir)/*
 	rm -f $(buildDir)/*.so
 	rm -f $(buildDir)/include/*.h
+
+	rm -f $(lab0SrcDir)/lab0

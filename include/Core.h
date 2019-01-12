@@ -6,13 +6,13 @@
 
 // common data types
 typedef char* cString;
-typedef enum { Nothing, Just } maybe;
 
 // common function types
 typedef void (*VoidToVoid)(void);
 typedef int (*IntToInt)(int);
 typedef bool (*IntToBool)(int);
 typedef void (*VoidPointerToVoid)(void*);
+typedef void* (*VoidPointerFolder)(void*, void*);
 
 // simple switches if else guard
 typedef void (*Guard)(bool, VoidToVoid);

@@ -16,6 +16,7 @@ typedef struct list list;
 
 typedef void (*BoxAction)(void* boxContent);
 typedef box (*BoxTransformer)(void* boxContent);
+typedef box (*BoxFolder)(box state, void* boxContent);
 
 typedef struct {
   // constructors
@@ -39,6 +40,7 @@ typedef struct {
   // we need to construct a new list, potentially of
   // different type
   list* (*map)(BoxTransformer f, const list* list);
+  box (*fold)(BoxFolder f, box state, const list* list);
 
   // memory
   void (*free)(list* list);

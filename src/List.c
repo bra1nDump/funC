@@ -84,6 +84,24 @@ list* listMap(BoxInVoidPointer f, const list* xs) {
   }
 }
 
+// maybe it will be more useful to return boxed type
+// since unwrapping a box should be avoided ..
+// also then the application of the function to the box contents
+// and state will be decoupled more
+box listFold(BoxFolder f, box state, const list* xs) {
+  if (listIsEmpty(xs)) {
+    return state;
+  } else {
+    box boxF(void* boxContent) {
+      return (*f)(state, boxContent);
+    }
+    return listFold 
+      ( f
+	, Box.bind(boxF, xs->data)
+	, xs->next);
+  }
+}
+
 void listFree(list* xs) {
   if (xs != NULL) {
     listFree(xs->next);
@@ -101,6 +119,7 @@ const ListModule List =
     .cons = listCons,
     .map_ = listMap_,
     .map = listMap,
+    .fold = listFold,
     .free = listFree
   };
 

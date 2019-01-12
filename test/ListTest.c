@@ -86,12 +86,33 @@ void testFromCArray() {
   
 }
 
+void testFold() {
+  box intSum(box acc, void* x) {
+    int xInt = *((int*) x);
+    box intAdd(void* accInt) {
+      int result = xInt + (*((int*) accInt));
+      return Box.box(sizeof(int), &result);
+    }
+    return Box.bind(intAdd, acc);
+  }
+  int initStateInt = 0;
+  box initState = Box.box(sizeof(int), &initStateInt);
+
+  Box.bind_
+    ( printInt
+      , List.fold
+      ( intSum
+	, initState
+	, List.integerRange(1, 3)));
+}
+
 // test suite
 int main () {
   testIntegerRange();
   testEmptyConsMap_();
   testMap();
   testMapIntToTuplePrint();
+  testFold();
 
   return 0;
 }
