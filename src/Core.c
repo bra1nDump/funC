@@ -144,4 +144,3 @@ const VoidPointerModule VoidPointer =
   { .ifElse = voidPointerIfElse,
     .match3 = voidPointerMatch3 
   };
-

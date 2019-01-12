@@ -90,7 +90,6 @@ void listFree(list* xs) {
 
 const struct listModule List =
   { .empty = listEmpty,
-    .fromCArray = listFromCArray,
     .integerRange = listIntegerRange,
     .isEmpty = listIsEmpty,
     .consBox = listConsBox,
