@@ -7,7 +7,7 @@ void stringPrint(void* string) {
 }
 
 void optionPrint(void* optionPointer) {
-  option* mainOption = (option*) optionPointer;
+  processOption* mainOption = (processOption*) optionPointer;
   if (mainOption == NULL) {
     printf("not an option\n");
   } else if (mainOption->maybeArg == NULL) {

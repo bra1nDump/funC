@@ -7,7 +7,7 @@
 typedef struct {
   cString name;
   cString maybeArg;
-} option;
+} processOption;
 
 typedef list* (*ParseOptions)(int, char**);
 

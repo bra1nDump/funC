@@ -21,7 +21,7 @@ list* systemParseOptions(int argCount, char** args) {
     if (maybeOption == NULL) {
       return Box.box(0, NULL);
     } else if (NULL == strpbrk(maybeOption, "=")) {
-      option noArgOption;
+      processOption noArgOption;
       size_t nameSize = strlen(maybeOption);
       
       noArgOption.name = malloc(sizeof(char) * (nameSize + 1));
@@ -30,9 +30,9 @@ list* systemParseOptions(int argCount, char** args) {
       
       noArgOption.maybeArg = NULL;
       
-      return Box.box(sizeof(option), &noArgOption);
+      return Box.box(sizeof(processOption), &noArgOption);
     } else {
-      option argOption;
+      processOption argOption;
       void* splitAt = (void*) strpbrk(maybeOption, "=");
       size_t nameSize = (size_t) (splitAt - (void*)maybeOption);
       size_t maybeOptionSize = strlen(maybeOption);
@@ -46,7 +46,7 @@ list* systemParseOptions(int argCount, char** args) {
       memcpy(argOption.maybeArg, splitAt + sizeof(char), argSize);
       argOption.maybeArg[argSize] = '\0';
       
-      return Box.box(sizeof(option), &argOption);
+      return Box.box(sizeof(processOption), &argOption);
     }
   }
 
@@ -57,7 +57,7 @@ list* systemParseOptions(int argCount, char** args) {
   return
     List.map
     (parseArg
-     , List.fromCArray(argCount, sizeof(char*), args));
+     , List.fromCArray(argCount - 1, sizeof(char*), ((void*) args) + sizeof(void*)));
 }
 
 const SystemModule System =
