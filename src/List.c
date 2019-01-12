@@ -1,21 +1,15 @@
 #include "Core.h"
 #include "List.h"
 
+// forward-used declarations
+// list* listCons(size_t size, void* unmanagedPointer, list* xs);
+
 bool listIsEmpty(const list* xs) {
   return xs == NULL;
 }
 
 list* listEmpty() {
   return NULL;
-}
-
-list* listFromCArray(int count, int elementSize, void* array) {
-  if (count == 0) {
-    return listEmpty();
-  } else {
-    return listCons(elementSize, array[0]
-		    , fromCStringList(count - 1, strings + 1));
-  }
 }
 
 list* listConsBox(box x, list* xs) {
@@ -30,6 +24,16 @@ list* listCons(size_t size, void* unmanagedPointer, list* xs) {
   return listConsBox
     ( Box.box(size, unmanagedPointer)
      , xs);
+}
+
+list* listFromCArray(int count, size_t elementSize, void* array) {
+  if (count == 0) {
+    return listEmpty();
+  } else {
+    return listCons
+      ( elementSize, array
+	, listFromCArray(count - 1, elementSize, array + 1));
+  }
 }
 
 void* listConsInt(int x, void* xs) {
@@ -90,6 +94,7 @@ void listFree(list* xs) {
 
 const struct listModule List =
   { .empty = listEmpty,
+    .fromCArray = listFromCArray,
     .integerRange = listIntegerRange,
     .isEmpty = listIsEmpty,
     .consBox = listConsBox,

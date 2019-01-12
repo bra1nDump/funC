@@ -1,12 +1,9 @@
 #include "List.h"
 
-typedef list* (*GetArgs)(int, char**);
-
-
-
+typedef list* (*ParseOptions)(int, char**);
 
 typedef struct {
-  GetArgs getArgs;
-} SystemModule
+  ParseOptions parseOptions;
+} SystemModule;
 
 extern const SystemModule System;

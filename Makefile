@@ -12,32 +12,61 @@
 SHELL = /bin/sh
 CC = gcc-8
 
-cFlags = -Iinclude
-
-# this is to create a shared library (.so file)
-libraryFlags = -shared
-
+###########################################################################################
 # output
-libDir = lib
-target = $(libDir)/funC.so
+buildDir = build
+funCLib = $(buildDir)/libFunC.so
 
-# input locations
+includeDir = include
 srcDir = src
-headerDir = include
 objectDir = $(srcDir)/obj
 
-$(shell mkdir $(objDir))
-
-# other
+# include = $(shell echo $(includeDir)/*.h)
 sources = $(shell echo $(srcDir)/*.c)
 objects = $(patsubst $(srcDir)/%.c,$(objectDir)/%.o,$(sources))
 
-$(info $(objectDir))
-$(info $(sources))
-$(info $(objects))
-
+ # fpic - posistion independent code
 $(objectDir)/%.o: $(srcDir)/%.c
-	$(CC) $(cFlags) -c -o $@ $<
+	$(CC) -fPIC -Wall -O2 -g -I$(includeDir) -c -o $@ $<
 
-$(target): $(objects)
-	$(CC) $(cFlags) $(objects) -o $@ $(libraryFlags)
+# -shared to create a shared library
+$(funCLib): $(objects)
+	$(CC) $(objects) -o $@ -shared
+
+copyHeaders:
+	cp $(includeDir)/*.h $(buildDir)/include/
+
+build: $(funCLib) copyHeaders
+
+#############################################################################################
+# tests
+testSrcDir = test
+testObjectDir = $(testSrcDir)/obj
+
+testSources = $(shell echo $(testSrcDir)/*.c)
+testObjects = $(patsubst $(testSrcDir)/%.c,$(testObjectDir)/%.o,$(testSources))
+
+$(info -------------------------)
+$(info test sources and objects:)
+$(info $(testSources))
+$(info $(testObjects))
+$(info -------------------------)
+
+$(testObjectDir)/%.o: $(testSrcDir)/%.c
+	$(CC) -c -I$(buildDir)/include $< -o $@
+
+testExecutable: $(testObjects)
+	$(CC) -I$(buildDir)/include -L./$(buildDir) -lFunC $(testObjects) -o testExecutable
+
+test: build testExecutable
+	echo "testing started ..."
+	./testExecutable
+	echo "testing done!"
+
+.PHONY: clean
+
+clean:
+	rm -f $(objectDir)/*
+	rm -f $(testObjectDir)/*
+	rm -f $(buildDir)/*.so
+	rm -f $(buildDir)/include/*.h

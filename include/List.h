@@ -19,6 +19,7 @@ struct listModule {
   // constructors
   list* (*empty)(void);
   list* (*integerRange)(int first, int last);
+  list* (*fromCArray)(int count, size_t elementSize, void* array);
 
   // state
   bool (*isEmpty)(const list* list);

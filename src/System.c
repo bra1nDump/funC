@@ -5,5 +5,5 @@ list* systemParseOptions(int argCount, char** args) {
 }
 
 const SystemModule System =
-  { .parseOptions = systemParseArgs
-  }
+  { .parseOptions = systemParseOptions
+  };
