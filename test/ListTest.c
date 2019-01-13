@@ -82,8 +82,21 @@ void testIntegerRange() {
       , List.integerRange(55, 60));
 }
 
+typedef struct {
+  char* str;
+  int x;
+} Foo;
+
+void printFoo(void* fooUnsafe) {
+  Foo* foo = (Foo*) fooUnsafe;
+  printf("%s %d\n", foo->str, foo->x);
+}
+
 void testFromCArray() {
-  
+  Foo foos[] = { { "lool", 0 }, { "lol2", 1 } };
+  List.map_
+    ( printFoo
+      , List.fromCArray(2, sizeof(Foo), foos));
 }
 
 void testFold() {
@@ -106,6 +119,27 @@ void testFold() {
 	, List.integerRange(1, 3)));
 }
 
+void testFind() {
+  bool p(void* elem) {
+    return *((int*) elem) == 2;
+  }
+
+  Box.bind_
+    ( printInt
+      , List.find
+      ( p
+	, sizeof(int)
+	, List.integerRange(1, 5)));
+
+  // this should cause a segfault
+  /* Box.bind_ */
+  /*   ( printInt */
+  /*     , List.find */
+  /*     ( p */
+  /* 	, sizeof(int) */
+  /* 	, List.integerRange(1, -5))); */
+}
+
 // test suite
 int main () {
   testIntegerRange();
@@ -113,6 +147,8 @@ int main () {
   testMap();
   testMapIntToTuplePrint();
   testFold();
+  testFromCArray();
+  testFind();
 
   return 0;
 }

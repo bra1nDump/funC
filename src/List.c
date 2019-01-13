@@ -32,7 +32,7 @@ list* listFromCArray(int count, size_t elementSize, void* array) {
   } else {
     return listCons
       ( elementSize, array
-	, listFromCArray(count - 1, elementSize, array + sizeof(void*)));
+	, listFromCArray(count - 1, elementSize, array + elementSize));
   }
 }
 
@@ -102,6 +102,25 @@ box listFold(BoxFolder f, box state, const list* xs) {
   }
 }
 
+// TODO: move element size to box, this has come up multiple times
+// also folder should operate on boxes (as input)
+box listFind(VoidPointerPredicate p, size_t elementSize, const list* xs) {
+  box emptyBox = Box.box(0, NULL);
+  box folder(box maybeMatch, void* boxContents) {
+    if ((*p)(boxContents)) {
+      // duplicates the box, which kind of makes sence, since
+      // we need to return a new one to the caller
+      return Box.box(elementSize, boxContents);
+    } else {
+      return maybeMatch;
+    }
+  }
+  return listFold
+    ( folder
+      , emptyBox
+      , xs);
+}
+
 void listFree(list* xs) {
   if (xs != NULL) {
     listFree(xs->next);
@@ -120,6 +139,7 @@ const ListModule List =
     .map_ = listMap_,
     .map = listMap,
     .fold = listFold,
+    .find = listFind,
     .free = listFree
   };
 

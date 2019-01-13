@@ -30,7 +30,7 @@ objects = $(patsubst $(srcDir)/%.c,$(objectDir)/%.o,$(sources))
 
  # fpic - posistion independent code
 $(objectDir)/%.o: $(srcDir)/%.c
-	$(CC) -fPIC -Wall -O2 -g -I$(includeDir) -c -o $@ $<
+	$(CC) -fPIC -Wall -O0 -g -I$(includeDir) -c -o $@ $<
 
 # -shared to create a shared library
 $(funCLib): $(objects)
@@ -66,7 +66,12 @@ test: funC $(testExecutables)
 lab0SrcDir = lab0
 
 lab: funC $(lab0SrcDir)/lab0.c
-	$(CC) -I$(buildDir)/include -L$(buildDir) -lFunC $(lab0SrcDir)/lab0.c -o $(lab0SrcDir)/lab0
+	$(CC) -O0 -g3 -ggdb -I$(buildDir)/include -L$(buildDir) -lFunC $(lab0SrcDir)/lab0.c -o $lab
+
+labTest: lab
+	$(info testing flag consumption)
+	$(lab0SrcDir)/lab0 --segfault --dump-core --catch
+	$(lab0SrcDir)/lab0 --segfault --dump-core --catch --input=lol.txt --output=lal.txt
 
 .PHONY: clean
 

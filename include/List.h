@@ -41,6 +41,7 @@ typedef struct {
   // different type
   list* (*map)(BoxTransformer f, const list* list);
   box (*fold)(BoxFolder f, box state, const list* list);
+  box (*find)(VoidPointerPredicate p, size_t elementSize, const list* xs);
 
   // memory
   void (*free)(list* list);

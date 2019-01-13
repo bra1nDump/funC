@@ -57,7 +57,7 @@ list* systemParseOptions(int argCount, char** args) {
   return
     List.map
     (parseArg
-     , List.fromCArray(argCount - 1, sizeof(char*), ((void*) args) + sizeof(void*)));
+     , List.fromCArray(argCount - 1, sizeof(char*), ((void*) args) + sizeof(char*)));
 }
 
 const SystemModule System =

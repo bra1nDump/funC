@@ -25,6 +25,10 @@ void boxBind_(VoidInVoidPointer f, box b) {
   (*f)(b.managedPointer);
 }
 
+void* unBox(box b) {
+  return b.managedPointer;
+}
+
 void boxFree(box x) {
   free(x.managedPointer);
 }

@@ -13,6 +13,7 @@ typedef int (*IntToInt)(int);
 typedef bool (*IntToBool)(int);
 typedef void (*VoidPointerToVoid)(void*);
 typedef void* (*VoidPointerFolder)(void*, void*);
+typedef bool (*VoidPointerPredicate)(void*);
 
 // simple switches if else guard
 typedef void (*Guard)(bool, VoidToVoid);
@@ -78,6 +79,8 @@ typedef void (*VoidInVoidPointer)(void* boxContent);
 typedef struct {
   // constructors
   box (*box)(size_t size, void* managedPointer);
+
+  void* (*unBox)(box b);
 
   // lifters
   box (*bind)(BoxInVoidPointer f, box b);
