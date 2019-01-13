@@ -19,7 +19,11 @@ list* systemParseOptions(int argCount, char** args) {
   // and will cause segfault
   box parseOptionArg(cString maybeOption) {
     if (maybeOption == NULL) {
-      return Box.box(0, NULL);
+      processOption arg;
+      arg.name = NULL;
+      arg.maybeArg = NULL;
+
+      return Box.box(sizeof(processOption), &arg);
     } else if (NULL == strpbrk(maybeOption, "=")) {
       processOption noArgOption;
       size_t nameSize = strlen(maybeOption);

@@ -79,8 +79,8 @@ typedef void (*VoidInVoidPointer)(void* boxContent);
 typedef struct {
   // constructors
   box (*box)(size_t size, void* managedPointer);
-
   void* (*unBox)(box b);
+  void* (*withDefault)(void* defaultValue, box b);
 
   // lifters
   box (*bind)(BoxInVoidPointer f, box b);

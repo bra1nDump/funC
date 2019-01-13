@@ -52,7 +52,7 @@ testExecutables = $(patsubst $(testSrcDir)/%.c,$(testExecutableDir)/%,$(testSour
 $(testExecutableDir)/%: $(testSrcDir)/%.c
 	$(CC) -I$(buildDir)/include -L$(buildDir) -lFunC $< -o $@
 
-test: funC $(testExecutables)
+libTest: funC $(testExecutables)
 	$(info testing started ...)
 	$(foreach testBinary,$(testExecutables),$(testBinary))
 	$(info testing completed :D)
@@ -61,17 +61,21 @@ test: funC $(testExecutables)
 # lab 0
 
 # dont forget to add -Wextra
-.DEFAULT_GOAL := lab
+.DEFAULT_GOAL := test
 
 lab0SrcDir = lab0
 
-lab: funC $(lab0SrcDir)/lab0.c
-	$(CC) -O0 -g3 -ggdb -I$(buildDir)/include -L$(buildDir) -lFunC $(lab0SrcDir)/lab0.c -o $lab
+lab0: funC $(lab0SrcDir)/lab0.c
+	$(CC) -O0 -g -I$(buildDir)/include -L$(buildDir) -lFunC $(lab0SrcDir)/lab0.c -o lab
 
-labTest: lab
+test: lab0
 	$(info testing flag consumption)
-	$(lab0SrcDir)/lab0 --segfault --dump-core --catch
-	$(lab0SrcDir)/lab0 --segfault --dump-core --catch --input=lol.txt --output=lal.txt
+	./lab --segfault --dump-core --catch
+	./lab --dump-core --segfault --catch
+	./lab --dump-core --catch --segfault
+
+	./lab --segfault --bogus
+	./lab bogus
 
 .PHONY: clean
 
@@ -81,4 +85,5 @@ clean:
 	rm -f $(buildDir)/*.so
 	rm -f $(buildDir)/include/*.h
 
-	rm -f $(lab0SrcDir)/lab0
+	rm -f lab
+	rm -fr lab.dSYM

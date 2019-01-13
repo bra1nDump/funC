@@ -17,6 +17,14 @@ box boxBox(size_t size, void* managedPointer) {
   return box;
 }
 
+void* boxWithDefault(void* defaultValue, box b) {
+  if (b.managedPointer == NULL) {
+    return defaultValue;
+  } else {
+    return b.managedPointer;
+  }
+}
+
 box boxBind(BoxInVoidPointer f, box b) {
   return (*f)(b.managedPointer);
 }
@@ -25,7 +33,7 @@ void boxBind_(VoidInVoidPointer f, box b) {
   (*f)(b.managedPointer);
 }
 
-void* unBox(box b) {
+void* boxUnBox(box b) {
   return b.managedPointer;
 }
 
@@ -35,6 +43,8 @@ void boxFree(box x) {
 
 const BoxModule Box =
   { .box = boxBox,
+    .unBox = boxUnBox,
+    .withDefault = boxWithDefault,
     .bind = boxBind,
     .bind_ = boxBind_,
     .free = boxFree
