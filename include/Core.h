@@ -9,8 +9,11 @@ typedef char* cString;
 
 // common function types
 typedef void (*VoidToVoid)(void);
+
 typedef int (*IntToInt)(int);
 typedef bool (*IntToBool)(int);
+typedef int (*VoidToInt)(void);
+
 typedef void (*VoidPointerToVoid)(void*);
 typedef void* (*VoidPointerFolder)(void*, void*);
 typedef bool (*VoidPointerPredicate)(void*);
