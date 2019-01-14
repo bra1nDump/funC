@@ -30,8 +30,11 @@ sources = $(shell echo src/*.c)
 objects = $(patsubst src/%.c,$(objectDir)/%.o,$(sources))
 
  # fpic - posistion independent code
-$(objectDir)/%.o: src/%.c
+$(objectDir)/%.o: src/%.c | $(objectDir)
 	$(CC) -fPIC -Wall -O0 -g -Iinclude -c -o $@ $<
+
+$(objectDir):
+	mkdir $@
 
 # -shared to create a shared library
 $(funCLib): $(objects)
@@ -57,6 +60,6 @@ test: funC $(testExecutables)
 .PHONY: clean
 
 clean:
-	rm -f $(objectDir)/*
+	rm -fr $(objectDir)
 	rm -f bin/*
 	rm -f build/*.so
