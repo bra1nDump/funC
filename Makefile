@@ -37,10 +37,11 @@ $(objectDir):
 	mkdir $@
 
 # -shared to create a shared library
-$(funCLib): $(objects)
-	$(CC) $(objects) -o $@ -shared
+funC: $(objects) | build
+	$(CC) $(objects) -o $(funCLib) -shared
 
-funC: $(funCLib)
+build:
+	mkdir build
 
 #############################################################################################
 # funC lib tests
@@ -49,8 +50,11 @@ funC: $(funCLib)
 testSources = $(shell echo test/*.c)
 testExecutables = $(patsubst test/%.c,bin/%,$(testSources))
 
-bin/%: test/%.c
+bin/%: test/%.c | bin
 	$(CC) -Iinclude -Lbuild -lFunC $< -o $@
+
+bin:
+	mkdir bin
 
 test: funC $(testExecutables)
 	$(info testing started ...)
