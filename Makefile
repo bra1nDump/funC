@@ -13,7 +13,7 @@
 
 # special variables
 SHELL = /bin/sh
-CC = gcc-8
+CC = gcc
 
 .DEFAULT_GOAL := funC
 
@@ -31,7 +31,7 @@ objects = $(patsubst src/%.c,$(objectDir)/%.o,$(sources))
 
  # fpic - posistion independent code
 $(objectDir)/%.o: src/%.c | $(objectDir)
-	$(CC) -fPIC -Wall -O0 -g -Iinclude -c -o $@ $<
+	$(CC) -fpic -Wall -O0 -g -Iinclude -c -o $@ $<
 
 $(objectDir):
 	mkdir $@
@@ -47,11 +47,14 @@ build:
 # funC lib tests
 #############################################################################################
 
+linkerFlags = '-Wl,-rpath,$$ORIGIN/../build' -Lbuild # the -L flag is for compile time linking and rpath is
+# for resolving library at runtime
+
 testSources = $(shell echo test/*.c)
 testExecutables = $(patsubst test/%.c,bin/%,$(testSources))
 
 bin/%: test/%.c | bin
-	$(CC) -Iinclude -Lbuild -lFunC $< -o $@
+	$(CC) $(linkerFlags) -Iinclude -lFunC  $< -o $@
 
 bin:
 	mkdir bin
